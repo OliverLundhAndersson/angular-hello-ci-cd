@@ -1,0 +1,26 @@
+name: Deploy to Netlify
+
+on:
+  push:
+    branches:
+      - main 
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout the repository
+      uses: actions/checkout@v2
+
+    - name: Install dependencies and build
+      run: |
+        npm install
+        npm run build  # Adjust this if you're using a different build command
+
+    - name: Deploy to Netlify
+      run: |
+        npx netlify-cli deploy --dir=build --site=$NETLIFY_SITE_ID --auth=$NETLIFY_AUTH_TOKEN --prod
+      env:
+        NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+        NETLIFY_SITE_ID: b26f008a-ada7-419a-bde7-3205c202947d
