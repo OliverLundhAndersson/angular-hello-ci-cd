@@ -1,26 +1,19 @@
-name: Deploy to Netlify
+name: "Deploy"
 
 on:
-  push:
-    branches:
-      - main 
+  pull_request:
+    types: closed
 
 jobs:
-  build:
+  deploy:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
-
+    name: "Deploy to Netlify"
     steps:
-    - name: Checkout the repository
-      uses: actions/checkout@v2
-
-    - name: Install dependencies and build
-      run: |
-        npm install
-        npm run build  # Adjust this if you're using a different build command
-
-    - name: Deploy to Netlify
-      run: |
-        npx netlify-cli deploy --dir=build --site=$NETLIFY_SITE_ID --auth=$NETLIFY_AUTH_TOKEN --prod
-      env:
-        NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-        NETLIFY_SITE_ID: b26f008a-ada7-419a-bde7-3205c202947d
+      - uses: actions/checkout@v3
+      - uses: jsmrcaga/action-netlify-deploy@v2.1.0
+        with:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.MY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.MY_SITE_ID }}
+          NETLIFY_DEPLOY_TO_PROD: true
+          build_directory: dist/hello-ci-cd/browser
